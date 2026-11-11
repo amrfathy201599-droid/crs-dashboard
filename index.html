@@ -1,110 +1,214 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Energya CRS Control Room</title>
-<link rel="icon" href="logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+<title>CRS Command Center</title>
+<style>
+:root{--bg:#070b16;--card:rgba(255,255,255,.055);--bd:rgba(255,255,255,.1);--tx:#eaf0ff;--mut:#8b97b8;--a:#5b8cff;--ok:#2ee6a6;--warn:#ffb84d;--bad:#ff6b8a}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.4 "Segoe UI",system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+.orb{position:fixed;border-radius:50%;filter:blur(110px);opacity:.35;z-index:-1;animation:float 18s ease-in-out infinite alternate;transition:background 1s}
+.o1{width:480px;height:480px;background:var(--a);top:-120px;left:-100px}.o2{width:420px;height:420px;background:#a45bff;bottom:-120px;right:-80px;animation-delay:-8s}
+@keyframes float{to{transform:translate(70px,50px) scale(1.15)}}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 24px;position:sticky;top:0;backdrop-filter:blur(14px);background:rgba(7,11,22,.7);z-index:5;border-bottom:1px solid var(--bd)}
+.brand{font-weight:800;font-size:20px;letter-spacing:.5px}.brand b{color:var(--a)}
+.live{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 2s infinite}
+.dot.off{background:var(--mut);animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 10px transparent}}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+button,select,input{font:inherit;color:var(--tx)}
+.tab,.btn,.chip{background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:7px 16px;cursor:pointer;transition:.25s}
+.tab:hover,.btn:hover,.chip:hover{border-color:var(--a);transform:translateY(-1px)}
+.tab.on,.chip.on{background:var(--a);border-color:var(--a);box-shadow:0 0 20px -4px var(--a);color:#fff;font-weight:600}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px 24px 0}
+.bar input[type=date]{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:5px 8px;color-scheme:dark}
+main{padding:16px 24px 40px;max-width:1500px;margin:auto}
+.grid{display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px;backdrop-filter:blur(10px);animation:rise .6s both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+h2{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:12px;font-weight:600}
+.hero{grid-template-columns:260px 1fr}
+.ringwrap{position:relative;display:grid;place-items:center}
+.ring{transform:rotate(-90deg)}.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .bg{stroke:rgba(255,255,255,.08)}.ring .fg{stroke:var(--a);stroke-dasharray:339.3;animation:dash 1.4s ease-out both;filter:drop-shadow(0 0 6px var(--a))}
+@keyframes dash{from{stroke-dashoffset:339.3}}
+.ringtxt{position:absolute;text-align:center}.ringtxt .big{font-size:38px;font-weight:800}.ringtxt small{color:var(--mut)}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.k{text-align:center}.k .v{font-size:26px;font-weight:800}.k .l{font-size:11px;color:var(--mut)}
+.k.rem .v{color:var(--warn)}.k.rel .v{color:var(--ok)}
+.prog{height:8px;border-radius:9px;background:rgba(255,255,255,.08);margin-top:14px;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--ok));border-radius:9px;transition:width 1.2s}
+.pipe{display:flex;flex-wrap:wrap;gap:0}
+.step{flex:1;min-width:130px;padding:14px 10px 14px 26px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%,14px 50%);text-align:center;margin-right:-6px}
+.step .v{font-size:24px;font-weight:800;color:var(--a)}.step .l{font-size:11px;color:var(--mut)}
+.two{grid-template-columns:1fr 1fr}
+.person{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin:9px 0}
+.person .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb{height:22px;border-radius:7px;background:linear-gradient(90deg,var(--a),var(--ok));display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:#06101f;min-width:26px;transition:width 1s;animation:grow 1s both}
+@keyframes grow{from{width:0!important}}
+.sub{font-size:11px;color:var(--mut);margin-top:2px}
+.ov{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.ovc{cursor:pointer;transition:.3s}.ovc:hover{transform:translateY(-4px);border-color:var(--a);box-shadow:0 12px 40px -12px var(--a)}
+.ovc .ringwrap{margin:6px auto}
+.toast{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--a),#a45bff);padding:14px 20px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.5);animation:rise .5s both;z-index:9;max-width:340px}
+.msg{max-width:620px;margin:60px auto;text-align:center}
+.msg h1{font-size:32px;margin-bottom:10px}.msg p{color:var(--mut);margin:8px 0 18px}
+.msg .btn{margin:4px;padding:10px 22px}.err{color:var(--bad);font-size:13px;margin-top:12px;white-space:pre-wrap}
+dialog{background:#0f1628;color:var(--tx);border:1px solid var(--bd);border-radius:20px;padding:24px;max-width:520px;width:92%}
+dialog::backdrop{background:rgba(0,0,0,.6)}dialog input[type=text]{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px;margin:10px 0}
+dialog ol{padding-left:18px;color:var(--mut);font-size:13px}dialog li{margin:4px 0}
+@media(max-width:800px){.hero,.two{grid-template-columns:1fr}.row4{grid-template-columns:repeat(2,1fr)}header,.bar,main{padding-left:12px;padding-right:12px}}
+body.tv header .btn.hide{display:none}
+</style></head><body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<header>
+ <div class="brand">⚡ CRS <b>Command Center</b></div>
+ <nav id="tabs"></nav>
+ <div class="live"><span class="dot off" id="dot"></span><span id="stamp">Not connected</span>
+  <button class="btn hide" onclick="document.getElementById('dlg').showModal()">⚙ Source</button>
+  <button class="btn" onclick="tv()">📺</button></div>
+</header>
+<div class="bar" id="bar"></div>
+<main id="app"></main>
 
-<!-- ============ LOGIN ============ -->
-<section id="login" class="login">
-  <svg class="wires" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs>
-      <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#084393" stop-opacity="0"/><stop offset=".5" stop-color="#4f8cff"/><stop offset="1" stop-color="#F44B33" stop-opacity="0"/></linearGradient>
-    </defs>
-    <g fill="none" stroke="url(#g1)" stroke-width="2">
-      <path class="wire" d="M-50 180 C 250 80, 450 320, 700 200 S 1100 120, 1300 260"/>
-      <path class="wire w2" d="M-50 330 C 200 450, 500 180, 760 360 S 1100 480, 1300 330"/>
-      <path class="wire w3" d="M-50 560 C 300 480, 520 700, 800 560 S 1100 440, 1300 600"/>
-      <path class="wire w4" d="M-50 700 C 260 760, 560 560, 820 690 S 1100 780, 1300 650"/>
-    </g>
-  </svg>
-  <form id="loginForm" class="login-card" autocomplete="on">
-    <div class="logo-pill"><img src="logo.png" alt="Energya Cables"></div>
-    <h1>CRS Control Room</h1>
-    <p class="sub">Live inquiry performance · Europe &amp; Africa</p>
-    <label>Username
-      <input id="u" name="username" autocomplete="username" required autofocus>
-    </label>
-    <label>Password
-      <input id="p" name="password" type="password" autocomplete="current-password" required>
-    </label>
-    <button id="loginBtn" type="submit">Sign in</button>
-    <p id="loginErr" class="err" role="alert"></p>
-    <p id="demoHint" class="hint" hidden></p>
-  </form>
-</section>
+<dialog id="dlg"><h2 style="color:var(--tx);font-size:18px">Connect your data</h2>
+ <ol><li>Upload <b>Database.xlsx</b> to Google Drive → open with Google Sheets (keep the same tab names).</li>
+ <li>Share → <b>Anyone with the link → Viewer</b>.</li><li>Paste the sheet link below.</li></ol>
+ <input type="text" id="sid" placeholder="https://docs.google.com/spreadsheets/d/…">
+ <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="dlg.close()">Cancel</button><button class="btn on tab" onclick="saveSrc()">Connect</button></div>
+</dialog>
+<input type="file" id="file" accept=".xlsx,.xls" hidden>
 
-<!-- ============ DASHBOARD ============ -->
-<main id="app" hidden>
-  <header class="top">
-    <div class="brand"><div class="logo-pill sm"><img src="logo.png" alt="Energya"></div>
-      <div><b>CRS Control Room</b><span id="syncInfo" class="live"><i></i><em>connecting…</em></span></div>
-    </div>
-    <nav class="tabs" id="regionTabs">
-      <button data-r="all" class="on">Combined</button>
-      <button data-r="europe">Europe</button>
-      <button data-r="africa">Africa</button>
-    </nav>
-    <div class="tools">
-      <button id="themeBtn" class="ghost" title="Switch theme">Light / Dark</button>
-      <button id="logoutBtn" class="ghost">Sign out</button>
-    </div>
-  </header>
+<script>
+/* ===== Settings: put your Google Sheet link/ID here so the manager needs no setup ===== */
+const DEFAULT_SHEET_ID='';
+const REFRESH_MS=60000;
 
-  <section class="filters">
-    <div class="chips" id="presets">
-      <button data-p="latest" class="on">Latest day</button>
-      <button data-p="today">Today</button>
-      <button data-p="month">This month</button>
-      <button data-p="year">This year</button>
-      <button data-p="all">All time</button>
-    </div>
-    <div class="selects">
-      <select id="fYear" aria-label="Year"></select>
-      <select id="fQuarter" aria-label="Quarter"></select>
-      <select id="fMonth" aria-label="Month"></select>
-      <select id="fDay" aria-label="Day"></select>
-    </div>
-    <div class="range" id="rangeLabel"></div>
-  </section>
+const REG={
+ Europe:{sheet:'Europe',ord:'europe',col:'#5b8cff',c:{rc:'recievedcr',ur:'releasedcr',it:'item',rcl:'receivedclarification',ucl:'releasedclarification',ru:'receivedupdate',uu:'releasedupdate',kc:'remaining',kcl:'remainingclarification2',ku:'remainingupdate2'}},
+ Africa:{sheet:'Africa',ord:'africa',col:'#2ee6a6',c:{rc:'receivedcr',ur:'releasedcr',it:'itemafrica',rcl:'receivedclarification',ucl:'releasedclarification',ru:'receivedupdate',uu:'releasedupdate',kc:'remaningcrs',kcl:'remaningclarification',ku:'remainingupdate'}},
+ 'Latin America':{sheet:'Latin Amercain',ord:'africa',col:'#ffb84d',c:{rc:'receivedcr',ur:'releasedcr',it:'itemafrica',rcl:'receivedclarification',ucl:'releasedclarification',ru:'receivedupdate',uu:'releasedupdate',kc:'remaningcrs',kcl:'remaningclarification',ku:'remainingupdate'}},
+ Local:{sheet:'Local',ord:'local',col:'#ff6b8a',noCU:true,c:{rc:'receviedlocal',ur:'releasedlocalcr',it:'itemlocal'}}
+};
+const DAY=864e5,DATA={},PREV={};
+let S={tab:'Overview',preset:'last',from:0,to:0,last:0,mode:'',sig:''},timer,nid=0;
+const $=id=>document.getElementById(id),dlg=$('dlg');
+const norm=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const fmt=n=>Math.round(n).toLocaleString();
+const dstr=d=>new Date(d).toISOString().slice(0,10);
 
-  <section class="hero" id="hero"></section>
+function toDay(d){
+ if(d instanceof Date){const t=new Date(d.getTime()+12*36e5);return Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())}
+ if(typeof d==='string'){const m=d.match(/Date\((\d+),(\d+),(\d+)/);if(m)return Date.UTC(+m[1],+m[2],+m[3]);const t=Date.parse(d);return isNaN(t)?null:t-t%DAY}
+ if(typeof d==='number')return Date.UTC(1899,11,30)+Math.round(d)*DAY;
+ return null}
+function store(sheet,heads,rows){
+ const h=heads.map(norm),out=[];
+ for(const a of rows){const d=toDay(a[1]),n=String(a[0]??'').trim();if(d==null||!n)continue;
+  const v={};for(let i=2;i<h.length;i++){const x=a[i];v[h[i]]=typeof x==='number'?x:0}out.push({n,d,v})}
+ DATA[sheet]={h:h.slice(2),rows:out}}
 
-  <section class="grid">
-    <article class="card wide">
-      <h2>Team performance <small>released per person</small></h2>
-      <div class="chartbox tall"><canvas id="cTeam"></canvas></div>
-    </article>
-    <article class="card">
-      <h2>Mix <small>released by type</small></h2>
-      <div class="chartbox"><canvas id="cMix"></canvas></div>
-    </article>
-    <article class="card wide">
-      <h2>Daily trend <small>last 30 days</small></h2>
-      <div class="chartbox"><canvas id="cTrend"></canvas></div>
-    </article>
-    <article class="card">
-      <h2>Top customers</h2>
-      <ol id="topCust" class="bars"></ol>
-    </article>
-    <article class="card wide">
-      <h2>Live feed <small>latest records</small></h2>
-      <ul id="feed" class="feed"></ul>
-    </article>
-  </section>
-  <footer class="foot">Data syncs automatically from the team Excel sheet · Energya Cables</footer>
-</main>
+async function loadGoogle(id){
+ const names=[...Object.values(REG).map(r=>r.sheet),'Orders'];
+ await Promise.all(names.map(async s=>{
+  let j;
+  try{j=await new Promise((ok,no)=>{const cb='__g'+Math.random().toString(36).slice(2),sc=document.createElement('script');
+   window[cb]=x=>{ok(x);sc.remove();delete window[cb]};
+   sc.onerror=()=>{sc.remove();no(new Error('x'))};setTimeout(()=>no(new Error('x')),20000);
+   sc.src=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json;responseHandler:${cb}&headers=1&sheet=${encodeURIComponent(s)}&_=${Date.now()}`;document.head.appendChild(sc)})}
+  catch(e){throw new Error('Could not read the Google Sheet.\nCheck that: (1) the link/ID is correct, (2) Share is set to "Anyone with the link → Viewer", (3) the tab names match exactly (Europe, Africa, Latin Amercain, Local, Orders), (4) the file is a real Google Sheet, not an .xlsx opened in preview.')}
+  if(j.status==='error')throw new Error(`Sheet "${s}": ${j.errors?.[0]?.detailed_message||'not found'}`);
+  store(s,j.table.cols.map(c=>c.label),j.table.rows.map(r=>(r.c||[]).map(c=>c?c.v:null)))}))}
 
-<div id="toasts" class="toasts" aria-live="polite"></div>
+function loadXlsx(file){
+ const go=()=>{const fr=new FileReader();fr.onload=e=>{try{
+   const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+   [...Object.values(REG).map(r=>r.sheet),'Orders'].forEach(s=>{const ws=wb.Sheets[s];if(!ws)throw new Error('Missing sheet: '+s);
+    const a=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});store(s,a[0],a.slice(1))});
+   clearInterval(timer);S.mode='file';S.sig='';ready($('stamp').textContent='File: '+file.name)}catch(err){fail(err)}};fr.readAsArrayBuffer(file)};
+ if(window.XLSX)go();else{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';sc.onload=go;document.head.appendChild(sc)}}
 
-<script src="chart.umd.js"></script>
-<script src="config.js"></script>
-<script type="module" src="app.js"></script>
-</body>
-</html>
+async function loadJSON(){
+ const r=await fetch('data.json?_='+Date.now(),{cache:'no-store'});
+ if(!r.ok)throw new Error('data.json not found (HTTP '+r.status+'). Run sync_to_dashboard.py once so it gets published.');
+ const j=await r.json();for(const s in j.sheets)store(s,j.sheets[s].heads,j.sheets[s].rows);return j.updated}
+function sheetId(){const q=new URLSearchParams(location.search).get('sheet');return q||localStorage.getItem('crs_sheet')||DEFAULT_SHEET_ID}
+function saveSrc(){const v=$('sid').value.trim(),m=v.match(/\/d\/([\w-]+)/),id=m?m[1]:v;if(!id)return;localStorage.setItem('crs_sheet',id);dlg.close();start()}
+
+async function refresh(first){
+ try{let lb;if(sheetId())await loadGoogle(sheetId());else lb='Live • data saved '+new Date(await loadJSON()).toLocaleString();$('dot').className='dot';ready(lb);}
+ catch(e){if(first)fail(e);else{$('dot').className='dot off';$('stamp').textContent='Connection lost – retrying…'}}}
+function start(){clearInterval(timer);if(!sheetId()&&!/^https?:/.test(location.protocol)){welcome();return}S.mode='google';$('app').innerHTML='<div class="msg"><h1>Loading…</h1></div>';refresh(true);timer=setInterval(()=>refresh(false),REFRESH_MS)}
+
+function lastDay(){let m=0;for(const R of Object.values(REG))for(const r of DATA[R.sheet].rows)if(r.d>m&&Object.values(r.v).some(x=>x>0))m=r.d;return m}
+function ready(label){
+ S.last=lastDay();const sig=JSON.stringify(Object.keys(REG).map(k=>{const R=REG[k],t=[0,0];DATA[R.sheet].rows.forEach(r=>{t[0]+=r.v[R.c.rc]||0;t[1]+=r.v[R.c.ur]||0});return t}));
+ $('stamp').textContent=label||('Live • updated '+new Date().toLocaleTimeString());
+ if(S.sig&&sig!==S.sig){toast('✨ New data just arrived');render()}else if(!S.sig){applyPreset(S.preset,true);render()}
+ S.sig=sig}
+function fail(e){$('dot').className='dot off';$('stamp').textContent='Error';
+ $('app').innerHTML=`<div class="msg"><h1>Couldn't load data</h1><div class="err">${e.message}</div><button class="btn" onclick="start()">Retry</button><button class="btn" onclick="welcome()">Back</button></div>`}
+function welcome(){$('tabs').innerHTML='';$('bar').innerHTML='';
+ $('app').innerHTML=`<div class="msg"><h1>Your KPIs, <span style="color:var(--a)">live</span>.</h1><p>Record in Excel/Google Sheets — the dashboard updates itself. No more daily emails.</p>
+ <button class="btn on tab" onclick="dlg.showModal()">🔗 Connect Google Sheet</button><button class="btn" onclick="$('file').click()">📂 Try with Excel file</button></div>`}
+$('file').onchange=e=>e.target.files[0]&&loadXlsx(e.target.files[0]);
+
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),5000)}
+function tv(){document.body.classList.toggle('tv');document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()}
+
+function applyPreset(p,silent){
+ S.preset=p;const L=S.last,d=new Date(L);
+ const m={last:[L,L],'7':[L-6*DAY,L],'30':[L-29*DAY,L],mtd:[Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1),L],all:[0,9e15]};
+ if(m[p])[S.from,S.to]=m[p];if(!silent)render()}
+function setRange(){S.preset='custom';S.from=Date.parse($('f').value)||0;S.to=Date.parse($('t').value)||9e15;render()}
+
+function agg(key){
+ const R=REG[key],T={},P={},D={};for(const k in R.c)T[k]=0;
+ for(const r of DATA[R.sheet].rows){
+  const inR=r.d>=S.from&&r.d<=S.to,g=k=>r.v[R.c[k]]||0;
+  const day=D[r.d]||(D[r.d]={rc:0,ur:0});day.rc+=g('rc');day.ur+=g('ur');
+  if(!inR)continue;for(const k in R.c)T[k]+=g(k);
+  if(!/^rec/i.test(r.n)){const p=P[r.n]||(P[r.n]={ur:0,uu:0,ucl:0,it:0});p.ur+=g('ur');p.uu+=g('uu');p.ucl+=g('ucl');p.it+=g('it')}}
+ T.pc=T.rc+T.kc;T.rm=T.pc-T.ur;T.pcl=T.rcl+T.kcl;T.rml=T.pcl-T.ucl;T.pu=T.ru+T.ku;T.rmu=T.pu-T.uu;T.pct=T.pc>0?Math.min(1,T.ur/T.pc):0;
+ const days=Object.keys(D).map(Number).filter(d=>d<=Math.min(S.to,S.last)).sort((a,b)=>a-b).slice(-14).map(d=>({d,...D[d]}));
+ return{T,days,people:Object.entries(P).map(([n,v])=>({n,...v,tot:v.ur+v.uu+v.ucl})).filter(p=>p.tot+p.it>0).sort((a,b)=>b.tot-a.tot||b.it-a.it).slice(0,12)}}
+function orders(key){
+ const suf=REG[key].ord,O=DATA.Orders,h=O.h,f=fn=>h.find(x=>x.endsWith(suf)&&fn(x)),
+  cols=[['Planning',f(x=>x.includes('planinng'))],['Approved',f(x=>x.startsWith('receivedordersfromsales'))],['To Sales',f(x=>x.startsWith('releasdtosales'))],['To Production',f(x=>x.startsWith('releasedtoproduction'))],['Items',f(x=>x.startsWith('items'))]];
+ return cols.map(([l,c])=>[l,O.rows.reduce((s,r)=>s+(r.d>=S.from&&r.d<=S.to&&c?r.v[c]||0:0),0)])}
+
+const N=v=>`<span class="n" data-id="${S.tab}_${nid++}" data-v="${v}">0</span>`;
+function ring(p,size=170,sm){return `<div class="ringwrap"><svg class="ring" width="${size}" height="${size}" viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="54"/><circle class="fg" cx="60" cy="60" r="54" style="stroke-dashoffset:${339.3*(1-p)}"/></svg><div class="ringtxt"><div class="big" style="${sm?'font-size:30px':''}">${Math.round(p*100)}%</div><small>completed</small></div></div>`}
+function kpi(t,rc,pc,ur,rm){const p=pc>0?Math.min(1,ur/pc):0;
+ return `<div class="card"><h2>${t}</h2><div class="row4"><div class="k"><div class="v">${N(rc)}</div><div class="l">Received</div></div><div class="k"><div class="v">${N(pc)}</div><div class="l">Processing</div></div><div class="k rel"><div class="v">${N(ur)}</div><div class="l">Released</div></div><div class="k rem"><div class="v">${N(rm)}</div><div class="l">Remaining</div></div></div><div class="prog"><i style="width:${p*100}%"></i></div></div>`}
+function trend(days){
+ if(!days.length)return'<div class="sub">No data</div>';const W=600,H=130,mx=Math.max(1,...days.map(d=>Math.max(d.rc,d.ur))),bw=W/days.length;
+ return `<svg viewBox="0 0 ${W} ${H+18}" width="100%">${days.map((d,i)=>{const x=i*bw+bw*.12,w=bw*.34,h1=d.rc/mx*H,h2=d.ur/mx*H;
+ return `<rect x="${x}" y="${H-h1}" width="${w}" height="${h1}" rx="3" fill="var(--a)" opacity=".55"/><rect x="${x+w+2}" y="${H-h2}" width="${w}" height="${h2}" rx="3" fill="var(--ok)"/><text x="${x+w}" y="${H+14}" font-size="10" fill="#8b97b8" text-anchor="middle">${new Date(d.d).getUTCDate()}</text>`}).join('')}</svg>
+ <div class="sub"><span style="color:var(--a)">■</span> Received &nbsp; <span style="color:var(--ok)">■</span> Released (CRS) — last ${days.length} days</div>`}
+
+function render(){
+ nid=0;const keys=Object.keys(REG),tabs=['Overview',...keys];
+ $('tabs').innerHTML=tabs.map(t=>`<button class="tab ${t===S.tab?'on':''}" onclick="S.tab='${t}';render()">${t}</button>`).join('');
+ const pr=[['last','Latest day'],['7','7 days'],['30','30 days'],['mtd','This month'],['all','All']];
+ $('bar').innerHTML=pr.map(([k,l])=>`<button class="chip ${S.preset===k?'on':''}" onclick="applyPreset('${k}')">${l}</button>`).join('')+
+  `<input type="date" id="f" value="${S.from?dstr(S.from):''}" onchange="setRange()"> → <input type="date" id="t" value="${S.to<9e15?dstr(S.to):''}" onchange="setRange()">`;
+ const col=S.tab==='Overview'?'#5b8cff':REG[S.tab].col;document.documentElement.style.setProperty('--a',col);
+ let h='';
+ if(S.tab==='Overview'){
+  h=`<div class="grid ov">${keys.map((k,i)=>{const {T}=agg(k);return `<div class="card ovc" style="--a:${REG[k].col};animation-delay:${i*.08}s" onclick="S.tab='${k}';render()"><h2>${k}</h2>${ring(T.pct,150,1)}<div class="row4" style="grid-template-columns:repeat(3,1fr)"><div class="k"><div class="v">${N(T.rc)}</div><div class="l">Received</div></div><div class="k rel"><div class="v">${N(T.ur)}</div><div class="l">Released</div></div><div class="k rem"><div class="v">${N(T.rm)}</div><div class="l">Remaining</div></div></div></div>`}).join('')}</div>`
+ }else{
+  const k=S.tab,R=REG[k],{T,days,people}=agg(k),od=orders(k),mx=Math.max(1,...people.map(p=>p.tot));
+  h=`<div class="grid"><div class="grid hero"><div class="card" style="display:grid;place-items:center"><h2>CRS Completion</h2>${ring(T.pct)}<div class="sub" style="margin-top:8px">${fmt(T.ur)} of ${fmt(T.pc)} released</div></div>
+  <div class="grid kpis">${kpi('CRS',T.rc,T.pc,T.ur,T.rm)}${R.noCU?'':kpi('Clarification',T.rcl,T.pcl,T.ucl,T.rml)+kpi('Update',T.ru,T.pu,T.uu,T.rmu)}
+  <div class="card"><h2>Items</h2><div class="k"><div class="v" style="font-size:44px">${N(T.it)}</div><div class="l">Items processed</div></div></div></div></div>
+  <div class="card"><h2>Orders Pipeline</h2><div class="pipe">${od.map(([l,v])=>`<div class="step"><div class="v">${N(v)}</div><div class="l">${l}</div></div>`).join('')}</div></div>
+  <div class="grid two"><div class="card"><h2>Daily Trend</h2>${trend(days)}</div>
+  <div class="card"><h2>Team Leaderboard</h2>${people.length?people.map(p=>`<div class="person"><div><div class="nm">${p.n}</div></div><div><div class="pb" style="width:${Math.max(6,p.tot/mx*100)}%">${fmt(p.tot)}</div><div class="sub">CRS ${fmt(p.ur)}${R.noCU?'':` · Update ${fmt(p.uu)} · Clarif. ${fmt(p.ucl)}`} · Items ${fmt(p.it)}</div></div></div>`).join(''):'<div class="sub">No activity in this period</div>'}</div></div></div>`}
+ $('app').innerHTML=h;
+ document.querySelectorAll('.n').forEach(el=>{const id=el.dataset.id,to=+el.dataset.v,from=PREV[id]??0;PREV[id]=to;const t0=performance.now();
+  (function step(t){const p=Math.min(1,(t-t0)/900);el.textContent=fmt(from+(to-from)*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)})(t0)})}
+
+start();
+</script></body></html>
