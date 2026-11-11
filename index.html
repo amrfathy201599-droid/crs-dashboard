@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Energya CRS Control Room</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="login" class="login">
+  <svg class="wires" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#084393" stop-opacity="0"/><stop offset=".5" stop-color="#4f8cff"/><stop offset="1" stop-color="#F44B33" stop-opacity="0"/></linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#g1)" stroke-width="2">
+      <path class="wire" d="M-50 180 C 250 80, 450 320, 700 200 S 1100 120, 1300 260"/>
+      <path class="wire w2" d="M-50 330 C 200 450, 500 180, 760 360 S 1100 480, 1300 330"/>
+      <path class="wire w3" d="M-50 560 C 300 480, 520 700, 800 560 S 1100 440, 1300 600"/>
+      <path class="wire w4" d="M-50 700 C 260 760, 560 560, 820 690 S 1100 780, 1300 650"/>
+    </g>
+  </svg>
+  <form id="loginForm" class="login-card" autocomplete="on">
+    <div class="logo-pill"><img src="logo.png" alt="Energya Cables"></div>
+    <h1>CRS Control Room</h1>
+    <p class="sub">Live inquiry performance · Europe &amp; Africa</p>
+    <label>Username
+      <input id="u" name="username" autocomplete="username" required autofocus>
+    </label>
+    <label>Password
+      <input id="p" name="password" type="password" autocomplete="current-password" required>
+    </label>
+    <button id="loginBtn" type="submit">Sign in</button>
+    <p id="loginErr" class="err" role="alert"></p>
+    <p id="demoHint" class="hint" hidden></p>
+  </form>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<main id="app" hidden>
+  <header class="top">
+    <div class="brand"><div class="logo-pill sm"><img src="logo.png" alt="Energya"></div>
+      <div><b>CRS Control Room</b><span id="syncInfo" class="live"><i></i><em>connecting…</em></span></div>
+    </div>
+    <nav class="tabs" id="regionTabs">
+      <button data-r="all" class="on">Combined</button>
+      <button data-r="europe">Europe</button>
+      <button data-r="africa">Africa</button>
+    </nav>
+    <div class="tools">
+      <button id="themeBtn" class="ghost" title="Switch theme">Light / Dark</button>
+      <button id="logoutBtn" class="ghost">Sign out</button>
+    </div>
+  </header>
+
+  <section class="filters">
+    <div class="chips" id="presets">
+      <button data-p="latest" class="on">Latest day</button>
+      <button data-p="today">Today</button>
+      <button data-p="month">This month</button>
+      <button data-p="year">This year</button>
+      <button data-p="all">All time</button>
+    </div>
+    <div class="selects">
+      <select id="fYear" aria-label="Year"></select>
+      <select id="fQuarter" aria-label="Quarter"></select>
+      <select id="fMonth" aria-label="Month"></select>
+      <select id="fDay" aria-label="Day"></select>
+    </div>
+    <div class="range" id="rangeLabel"></div>
+  </section>
+
+  <section class="hero" id="hero"></section>
+
+  <section class="grid">
+    <article class="card wide">
+      <h2>Team performance <small>released per person</small></h2>
+      <div class="chartbox tall"><canvas id="cTeam"></canvas></div>
+    </article>
+    <article class="card">
+      <h2>Mix <small>released by type</small></h2>
+      <div class="chartbox"><canvas id="cMix"></canvas></div>
+    </article>
+    <article class="card wide">
+      <h2>Daily trend <small>last 30 days</small></h2>
+      <div class="chartbox"><canvas id="cTrend"></canvas></div>
+    </article>
+    <article class="card">
+      <h2>Top customers</h2>
+      <ol id="topCust" class="bars"></ol>
+    </article>
+    <article class="card wide">
+      <h2>Live feed <small>latest records</small></h2>
+      <ul id="feed" class="feed"></ul>
+    </article>
+  </section>
+  <footer class="foot">Data syncs automatically from the team Excel sheet · Energya Cables</footer>
+</main>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script src="chart.umd.js"></script>
+<script src="config.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
